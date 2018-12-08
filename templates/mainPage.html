@@ -1,0 +1,57 @@
+<html>
+  <head>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pretty.css')}}">
+    <title>Main</title>
+  </head>
+  <body>
+  <a class=goto href="{{url_for('addBook') }}" >Dodaj Książke</a>
+  <a class=goto href="{{url_for('addAuthor') }}" >Dodaj Autora</a>
+  <a class=goto href="logout.html">Wyloguj</a>
+
+
+  {% if createdAuthor %}
+      <div>
+        Pomyślnie utworzono autora
+      </div>
+  {% endif %}
+
+  <div class="bookList">
+    <table>
+      <tr>
+        <th>
+          Okładka
+        </th>
+        <th>
+          Tytuł
+        </th>
+        <th>
+          Autor
+        </th>
+        <th>
+          Dodaj do ulubionych
+        </th>
+      </tr>
+        {% for book in books %}
+        <tr>
+        <td> Cover Placeholder &gt;3</td>
+        <td>{{book.title}} </td>
+        <td>{{book.author}} </td>
+        <td> serducho czy coś </td>
+        </tr>
+          {% else %}
+          </table>
+          Brak książek w bazie.
+          <a class=goto href="addBook.html">Dodaj</a>     
+        {% endfor %}
+    </table>
+    {% if next_page_token %}
+    <nav>
+      <ul class="pager">
+        <li><a href="?page_token={{next_page_token}}">More</a></li>
+      </ul>
+    </nav>
+    {% endif %}
+
+  </div>
+  </body>
+</html>
