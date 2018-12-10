@@ -9,10 +9,10 @@ Wprowadź dane książki
     </br>
     <div class="container">
     <label for="title"> Tytuł</label>
-    <input type=text placeholder="Wprowadz tytul" name="title" id="title">
+    <input type=text placeholder="Wprowadz tytul" name="title" id="title" required>
     </br>
     <label for="authors"> Wybierz autora</label>
-    <input type=text placeholder="znajdz autora na liscie" list="authors" name="author">
+    <input placeholder="znajdz autora na liscie" list="authors" name="author" required>
     <datalist id="authors">
        {% for author in authors %}
         <option value="{{ author.firstName}} {{author.lastName}}">
@@ -26,7 +26,7 @@ Wprowadź dane książki
     <input type="hidden" value="addBook">
     </br>
     <label for="file"> Okładka</label>
-    <input type="file" name="image" id="file">
+    <input type="file" name="imageURL" id="file">
 </br>
 <input type="submit" value="Dodaj">
 </div>
