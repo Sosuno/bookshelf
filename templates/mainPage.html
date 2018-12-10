@@ -4,16 +4,23 @@
     <title>Main</title>
   </head>
   <body>
-  <a class=goto href="{{url_for('addBook') }}" >Dodaj Książke</a>
-  <a class=goto href="{{url_for('addAuthor') }}" >Dodaj Autora</a>
+    Witaj {{ user.username }} ! ||
+  <a class=goto href="{{url_for('addBook') }}" >Dodaj Książke</a> ||
+  <a class=goto href="{{url_for('addAuthor') }}" >Dodaj Autora</a> ||
   <a class=goto href="logout.html">Wyloguj</a>
 
 
   {% if createdAuthor %}
-      <div>
-        Pomyślnie utworzono autora
-      </div>
+    <div class = "success">
+      Pomyślnie utworzono autora
+   </div>
   {% endif %}
+  {% if createdBook %}
+    <div class = "success">
+      Pomyślnie utworzono książkę
+    </div>
+  {% endif %}
+
 
   <div class="bookList">
     <table>
