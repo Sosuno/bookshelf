@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest
 
 def _get_storage_client():
     return storage.Client(
-        project=['solwit-pjatk-arc-2018-gr4'])
+        project='solwit-pjatk-arc-2018-gr4')
 
 
 def _check_extension(filename, allowed_extensions):
@@ -34,7 +34,7 @@ def upload_file(file_stream, filename, content_type):
     filename = _safe_filename(filename)
 
     client = _get_storage_client()
-    bucket = client.bucket(['solwit-pjatk-bookshelf'])
+    bucket = client.bucket('solwit-pjatk-bookshelf')
     blob = bucket.blob(filename)
 
     blob.upload_from_string(

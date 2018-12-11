@@ -70,7 +70,7 @@ def BookDelete(id):
 
 def upload_image_file(file):
     if not file:
-        return None
+       return None
 
     public_url = storage.upload_file(
         file.read(),
@@ -134,6 +134,14 @@ def isAuthorInDB(name, surname, birthYear):
         return True
     else:
         return False
+
+def getAuthor(name, surname):
+    ds = get_client()
+    query = ds.query(kind = 'Author')
+    query.add_filter('username', '=', name)
+    query.add_filter('surname', '=', surname)
+    result = list(query.fetch())
+    return result
 
 
 #---------------------------------> USERS
