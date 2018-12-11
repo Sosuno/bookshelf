@@ -50,7 +50,7 @@ def mainPage():
         books=books,
         next_page_token=next_page_token,
         createdAuthor=False, 
-        createdBook = True, 
+        createdBook = False, 
         user = loggedUser)
 
 @app.route('/addBook', methods=['GET', 'POST'])
@@ -58,13 +58,14 @@ def addBook():
     if request.method == 'POST':
 
         data = request.form.to_dict(flat=True)
-        image_url = model.upload_image_file(request.files.get('imageURL'))
-        data['imageURL'] = image_url
+        img = request.files.get('image')
+        image_url = model.upload_image_file(img)
+        data['imageUrl'] = image_url
         book = model.createBook(data)
-        return render_template("mainPage.html", createdAuthor=False, createdBook = True, user = loggedUser)
+        return redirect(url_for('mainPage'), createdAuthor=False, createdBook = True, user = loggedUser)
 
 
-    return render_template("addBook.html", action="addBook", authors = model.AuthorList())
+    return render_template("addBook.html", action="addBook", authors = model.AuthorList(), book={})
 
 
 @app.route('/addAuthor', methods=['GET', 'POST'])
