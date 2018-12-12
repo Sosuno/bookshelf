@@ -16,9 +16,9 @@ def login():
             loggedUser = model.getUser(request.form['username'])
             return redirect("mainPage")
         else:
-            return render_template("login.html", action="login", failed = True)        
+            return render_template("login.vue", action="login", failed = True)        
 
-    return render_template("login.html", action="login", failed = False)
+    return render_template("login.vue", action="login", failed = False)
 
 
 
@@ -27,13 +27,13 @@ def register():
     if request.method == 'POST':
 
         if model.isUserInDB(request.form['username']):
-            return render_template("register.html", action="register", exists=True)
+            return render_template("register.vue", action="register", exists=True)
         else:
             data = request.form.to_dict(flat=True)
             book = model.create(data)
             return redirect("login")
 
-    return render_template("register.html", action="register", exists=False)
+    return render_template("register.vue", action="register", exists=False)
 
 
 
@@ -45,19 +45,13 @@ def mainPage():
 
     books, next_page_token = model.BookList(cursor=token)
     if request.method == 'POST':
-     #   tempBooks = books
-     #   books = []
         if request.form['searchBy'] == 'tytul':
-        #    title = request.form['search']
-       ##     for book in tempBooks:
-         #        if title.lower() in book['title'].lower():
-          #          books.append(book)
           books = model.getBookByTitle(request.form['search'])
         else:
             books = model.getBookByAuthor(request.form['search'])
 
     return render_template(
-        "mainPage.html",
+        "mainPage.vue",
         books=books,
         next_page_token=next_page_token,
         createdAuthor=False, 
@@ -77,7 +71,7 @@ def addBook():
         return redirect(url_for('mainPage', createdAuthor=False, createdBook = True, user = loggedUser))
 
 
-    return render_template("addBook.html", action="addBook", authors = model.AuthorList(), book={})
+    return render_template("addBook.vue", action="addBook", authors = model.AuthorList(), book={})
 
 
 @app.route('/addAuthor', methods=['GET', 'POST'])
@@ -86,10 +80,10 @@ def addAuthor():
 
             if model.isAuthorInDB(request.form['firstName'],
                                  request.form['lastName']):
-                return redirect("addAuthor.html", action="addAuthor", exists=True)
+                return redirect("addAuthor.vue", action="addAuthor", exists=True)
             else:
                 data = request.form.to_dict(flat=True)
                 book = model.createAuthor(data)
-                return redirect("mainPage.html", createdAuthor=True, createdBook=False, user = loggedUser)
+                return redirect("mainPage.vue", createdAuthor=True, createdBook=False, user = loggedUser)
 
-    return render_template("addAuthor.html", action="addAuthor", exists=False)
+    return render_template("addAuthor.vue", action="addAuthor", exists=False)
