@@ -30,13 +30,14 @@ def BookList(limit=10, cursor=None):
     ds = get_client()
 
     query = ds.query(kind='Book', order=['title'])
+    query_iterator = query.fetch(limit=limit, start_cursor=cursor)
+    page = next(query_iterator.pages)
 
-    query_iter = query.fetch(start_cursor=cursor, limit=5)
-    page = next(query_iter.pages)
+    entities = builtin_list(map(from_datastore, page))
+    next_cursor = (
+        query_iterator.next_page_token.decode('utf-8')
+        if query_iterator.next_page_token else None)
 
-    entities = list(page)
-    next_cursor = query_iter.next_page_token
-    
     return entities, next_cursor
 
 def BookRead(id):
@@ -82,30 +83,6 @@ def upload_image_file(file):
 
     return public_url
 
-def getBookByTitle(title):
-    ds = get_client()
-    query = ds.query(kind = 'Book')
-    books = query.fetch()
-    results = []
-    for book in books:
-        if title.lower() in book['title'].lower():
-            results.append(book)
-    
-    return results
-
-
-def getBookByAuthor(author):
-    ds = get_client()
-    query = ds.query(kind = 'Book')
-    books = query.fetch()
-    results = []
-    for book in books:
-        if author.lower() in book['author'].lower():
-            results.append(book)
-    
-    return results
-
-
 #---------------------------------> AUTHORS
 
 def AuthorRead(id):
@@ -123,7 +100,8 @@ def AuthorUpdate(data, id=None):
         key = ds.key('Author')
 
     entity = datastore.Entity(
-        key=key)
+        key=key,
+        exclude_from_indexes=['birthYear'])
 
     entity.update(data)
     ds.put(entity)
@@ -146,7 +124,7 @@ def AuthorDelete(id):
     ds.delete(key)
 
 
-def isAuthorInDB(name, surname):
+def isAuthorInDB(name, surname, birthYear):
     ds = get_client()
     query = ds.query(kind='Author')
     query.add_filter('firstName', '=', name)
@@ -160,8 +138,8 @@ def isAuthorInDB(name, surname):
 def getAuthor(name, surname):
     ds = get_client()
     query = ds.query(kind = 'Author')
-    query.add_filter('username', '=', name)
-    query.add_filter('surname', '=', surname)
+    query.add_filter('firstName', '=', name)
+    query.add_filter('lastName', '=', surname)
     result = list(query.fetch())
     return result
 
