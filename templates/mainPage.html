@@ -22,10 +22,10 @@
   {% endif %}
 
   Szukaj książki
-  <form>
+  <form method="POST">
     <input name="search">
     Szukaj po:
-    Tytule: <input type="radio" value="tytul" name="searchBy">
+    Tytule: <input type="radio" value="tytul" name="searchBy" checked>
     Autorze: <input type="radio" value="autor" name="searchBy">
     <input type="submit" value="Szukaj">
   </form>
@@ -55,14 +55,14 @@
             <img class="book-image" src="https://storage.googleapis.com/solwit-pjatk-bookshelf/Cover-placeholder.gif" width="100px" height="200px">
           {% endif %}
         </div></td>
-        <td>{{book.title}} </td>
+        <td> {{book.title}} </td>
         <td>{{book.author}} </td>
         <td> <input type="checkbox" name="{{book.id}}" > </td>
         </tr>
           {% else %}
           </table>
           Brak książek w bazie.
-          <a class=goto href="{{url_for(addBook)}}">Dodaj</a>     
+          <a class=goto href="{{url_for('addBook') }}">Dodaj</a>     
         {% endfor %}
     </table>
     {% if next_page_token %}

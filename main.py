@@ -37,13 +37,24 @@ def register():
 
 
 
-@app.route('/mainPage')
+@app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     token = request.args.get('page_token', None)
     if token:
         token = token.encode('utf-8')
 
     books, next_page_token = model.BookList(cursor=token)
+    if request.method == 'POST':
+     #   tempBooks = books
+     #   books = []
+        if request.form['searchBy'] == 'tytul':
+        #    title = request.form['search']
+       ##     for book in tempBooks:
+         #        if title.lower() in book['title'].lower():
+          #          books.append(book)
+          books = model.getBookByTitle(request.form['search'])
+        else:
+            books = model.getBookByAuthor(request.form['search'])
 
     return render_template(
         "mainPage.html",
@@ -51,7 +62,8 @@ def mainPage():
         next_page_token=next_page_token,
         createdAuthor=False, 
         createdBook = False, 
-        user = loggedUser)
+        user = loggedUser,
+        action = "mainPage")
 
 @app.route('/addBook', methods=['GET', 'POST'])
 def addBook():
@@ -62,7 +74,7 @@ def addBook():
         image_url = model.upload_image_file(img)
         data['imageUrl'] = image_url
         book = model.createBook(data)
-        return redirect(url_for('mainPage'), createdAuthor=False, createdBook = True, user = loggedUser)
+        return redirect(url_for('mainPage', createdAuthor=False, createdBook = True, user = loggedUser))
 
 
     return render_template("addBook.html", action="addBook", authors = model.AuthorList(), book={})
@@ -73,12 +85,11 @@ def addAuthor():
     if request.method == 'POST':
 
             if model.isAuthorInDB(request.form['firstName'],
-                                 request.form['lastName'],    
-                                 request.form['birthYear']):
-                return render_template("addAuthor.html", action="addAuthor", exists=True)
+                                 request.form['lastName']):
+                return redirect("addAuthor.html", action="addAuthor", exists=True)
             else:
                 data = request.form.to_dict(flat=True)
                 book = model.createAuthor(data)
-                return render_template("mainPage.html", createdAuthor=True, createdBook=False, user = loggedUser)
+                return redirect("mainPage.html", createdAuthor=True, createdBook=False, user = loggedUser)
 
     return render_template("addAuthor.html", action="addAuthor", exists=False)
