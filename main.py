@@ -45,8 +45,12 @@ def addBook(id = None):
         else:
             return jsonify(False)
     elif request.method == 'GET':
-        book = model.BookRead(id)
-        return jsonify(book)
+        if id is None:
+            books = model.BookList()
+            return jsonify(books)
+        else:
+            book = model.BookRead(id)
+            return jsonify(book)
     else:
         model.BookDelete(id)
 
