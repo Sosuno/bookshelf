@@ -1,5 +1,5 @@
 import model_datastore
-from flask import Flask, request, jsonify, after_this_request, make_response
+from flask import Flask, request, jsonify, after_this_request, make_response, session
 
 
 app = Flask(__name__)
@@ -13,11 +13,9 @@ def login():
         if model.isCorrectUser(username, request.form['password']):
             model.destroyAllUserSessions(username)
             session = model.createSession(username)
+            session['uuid'] = session['sessionID']
             out = jsonify(True)
             return out
-            @after_this_request
-            def setCookie(reponse):
-                reponse.setset_cookie('session', session['sessionID'], max_age=60*60*24)
         else:
             return jsonify(False)
 
@@ -52,18 +50,18 @@ def addBook(id = None):
     else:
         model.BookDelete(id)
 
-@app.route('/isLogged', methods=['GET', 'POST'] )
+@app.route("/isLogged", methods=['GET', 'POST'] )
 def isLogged():
-    if request.cookies.get('session') is None:
+    if 'uuid' not in session:
         return jsonify(False)
     else:
-        uuid = request.cookies.get('session')
+        uuid = session['uuid']
         if not model.checkIfSessionActive(uuid):
             return jsonify(False)
         else:
             return jsonify(True)
 
-@app.route('/Author', methods=['GET', 'POST'])
+@app.route("/Author", methods=['GET', 'POST'])
 def addAuthor():
     if request.method == 'POST':
             if model.isAuthorInDB(request.form['firstName'],
@@ -77,22 +75,20 @@ def addAuthor():
         return jsonify(model.AuthorList())
         
 
-@app.route('/logout', method= ['POST', 'GET'])
+@app.route("/logout", methods= ['POST', 'GET'])
 def logout(): 
-    uuid = request.cookies.get('session')
+    uuid = session['uuid']
     user = model.getUsernameFromSession(uuid)
     model.destroyAllUserSessions(user)
     out = jsonify(msg = 'Logged out')
+    session.pop('uuid', None)
     return out
-    @after_this_request
-    def resetCookie(reponse):
-        reponse.setset_cookie('session', uuid, max_age=0)
 
-@app.route("/favBooks/<bookId>", method= ['POST', 'GET', 'DELETE'])    
-@app.route("/favBooks", method= ['POST', 'GET', 'DELETE'])
+@app.route("/favBooks/<bookId>", methods= ['POST', 'GET', 'DELETE'])    
+@app.route("/favBooks", methods= ['POST', 'GET', 'DELETE'])
 def favBooks(bookID = None):
 
-    uuid = request.cookies.get('session')
+    uuid = session['uuid']
     username = model.getUsernameFromSession(uuid)
     user = model.getUser(username)
     if request.method == 'POST':
