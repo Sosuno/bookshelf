@@ -6,9 +6,6 @@ app = Flask(__name__)
 
 model = model_datastore
 
-
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -48,11 +45,14 @@ def getBooks():
 def addBook():
     if request.method == 'POST':
         data = request.form.to_dict(flat=True)
-        img = request.files.get('image')
-        image_url = model.upload_image_file(img)
-        data['imageUrl'] = image_url
-        book = model.createBook(data)
-        return jsonify(book)
+        if not model.checkIfBookExists(data['author'], data['title']):
+            img = request.files.get('image')
+            image_url = model.upload_image_file(img)
+            data['imageUrl'] = image_url
+            book = model.createBook(data)
+            return jsonify(book)
+        else:
+            return jsonify(False)
 
 @app.route('/getAuthors',  methods=['GET', 'POST'])
 def getAuthors():
@@ -65,12 +65,9 @@ def isLogged():
     else:
         uuid = request.cookies.get('session')
         if not model.checkIfSessionActive(uuid):
-            notLogged = True
             return jsonify(False)
         else:
             return jsonify(True)
-
-
 
 @app.route('/addAuthor', methods=['GET', 'POST'])
 def addAuthor():

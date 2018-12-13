@@ -10,10 +10,8 @@ builtin_list = list
 def init_app(app):
     pass
 
-
 def get_client():
     return datastore.Client('solwit-pjatk-arc-2018-gr4')
-
 
 def from_datastore(entity):
     if not entity:
@@ -89,6 +87,7 @@ def getBookByTitle(title):
             results.append(from_datastore(book))
     
     return results
+
 def getBookByAuthor(author):
     ds = get_client()
     query = ds.query(kind = 'Book')
@@ -100,6 +99,17 @@ def getBookByAuthor(author):
     
     return results
 
+def checkIfBookExists(title, author):
+    ds = get_client()
+    query = ds.query(kind = 'Book')
+    query.add_filter('Author', '=', author)
+    query.add_filter('Title', '=', title)
+    results = list(query.fetch(1))
+    if results is None:
+        return False
+    else:
+        return True
+
 #---------------------------------> AUTHORS
 
 def AuthorRead(id):
@@ -107,7 +117,6 @@ def AuthorRead(id):
     key = ds.key('Author', int(id))
     results = ds.get(key)
     return from_datastore(results)
-
 
 def AuthorUpdate(data, id=None):
     ds = get_client()
@@ -126,8 +135,6 @@ def AuthorUpdate(data, id=None):
 
 createAuthor = AuthorUpdate
 
-
-
 def AuthorList():
     ds = get_client()
     query = ds.query(kind='Author', order=['lastName'])
@@ -141,7 +148,6 @@ def AuthorDelete(id):
     ds = get_client()
     key = ds.key('Author', int(id))
     ds.delete(key)
-
 
 def isAuthorInDB(name, surname):
     ds = get_client()
@@ -161,7 +167,6 @@ def getAuthor(name, surname):
     query.add_filter('lastName', '=', surname)
     result = list(query.fetch())
     return from_datastore(result)
-
 
 #---------------------------------> USERS
     
@@ -200,7 +205,6 @@ def UserDelete(id):
     key = ds.key('User', int(id))
     ds.delete(key)
 
-
 def isUserInDB(username):
     ds = get_client()
     query = ds.query(kind='User')
@@ -221,7 +225,6 @@ def isCorrectUser(username, password):
         return True
     else:
         return False
-
 
 #---------------------------------> SESSION
 
