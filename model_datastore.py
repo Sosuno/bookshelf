@@ -86,7 +86,7 @@ def getBookByTitle(title):
     results = []
     for book in books:
         if title.lower() in book['title'].lower():
-            results.append(book)
+            results.append(from_datastore(book))
     
     return results
 def getBookByAuthor(author):
@@ -96,7 +96,7 @@ def getBookByAuthor(author):
     results = []
     for book in books:
         if author.lower() in book['author'].lower():
-            results.append(book)
+            results.append(from_datastore(book))
     
     return results
 
