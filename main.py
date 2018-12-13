@@ -1,5 +1,5 @@
 import model_datastore
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -21,8 +21,6 @@ def login():
             return out
         else:
             return jsonify(False)
-
-    return render_template("login.vue")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
