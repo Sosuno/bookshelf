@@ -4,10 +4,10 @@
     <title>Main</title>
   </head>
   <body>
-    Witaj {{ user.username }} ! ||
+  
   <a class=goto href="{{url_for('addBook') }}" >Dodaj Książke</a> ||
   <a class=goto href="{{url_for('addAuthor') }}" >Dodaj Autora</a> ||
-  <a class=goto href="logout.html">Wyloguj</a>
+  <a class=goto href="{{url_for('logout') }}">Wyloguj</a>
 
 
   {% if createdAuthor %}
@@ -29,7 +29,7 @@
     Autorze: <input type="radio" value="autor" name="searchBy">
     <input type="submit" value="Szukaj">
   </form>
-
+  
   <div class="bookList">
     <table>
       <tr>
@@ -47,6 +47,7 @@
         </th>
       </tr>
         {% for book in books %}
+        klucz anyone? {{book.key}}
         <tr>
         <td><div class="media-left">
           {% if book.imageUrl %}
@@ -60,11 +61,10 @@
         <td> <input type="checkbox" name="{{book.id}}" > </td>
         </tr>
           {% else %}
-          </table>
           Brak książek w bazie.
           <a class=goto href="{{url_for('addBook') }}">Dodaj</a>     
         {% endfor %}
-    </table>
+    </table>          
     {% if next_page_token %}
     <nav>
       <ul class="pager">

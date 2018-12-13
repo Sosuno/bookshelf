@@ -1,3 +1,4 @@
+
 <html>
 <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pretty.css')}}">
@@ -15,11 +16,9 @@
     <label for="firstName"> Imię
     <input type="text" placeholder="Enter Author's first Name " name="firstName" id="firstName">
     </label>
-    </br>
     <label for="lastName"> Nazwisko
-    <input type="text" placeholder="Enter Author's Surname "name="lastName" id="lastName">
+    <input type="text" placeholder="Enter Author's Surname " name="lastName" id="lastName">
     </label>
-    </br>
     <input type="submit" value="dodaj">
     </div>
 </form>
