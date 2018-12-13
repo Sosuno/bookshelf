@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pretty.css')}}">
@@ -17,7 +18,6 @@
 
     <label for="password"> Wprowadz haslo</label>
     <input type="password" placeholder="Password" name="password" min="3" required>
-    <input type="password" placeholder="Confirm Password" name="confirmPassword" min="3" required>
     <input type="hidden" name="security_lvl" value="normal">
     <input type="hidden" name="favBooks" value="[]">
     <input type="submit" VALUE="Register">

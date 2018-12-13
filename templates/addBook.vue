@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <title>Dodaj książke</title>
@@ -6,11 +7,11 @@
 <body>
 Wprowadź dane książki
 <form method="POST" enctype="multipart/form-data">
-    </br>
+
     <div class="container">
     <label for="title"> Tytuł</label>
     <input type=text placeholder="Wprowadz tytul" name="title" id="title" value="{{book.title}}" required autocomplete="off">
-    </br>
+
     <label for="authors"> Wybierz autora</label>
     <input placeholder="znajdz autora na liscie" list="authors" name="author" required autocomplete="off">
     <datalist id="authors">
@@ -23,13 +24,13 @@ Wprowadź dane książki
         {% endfor %}
     </datalist>
     Jeśli nie znalazłeś autora na liście możesz<a class=link href="addAuthor"> dodać</a>
-</br>
+
     <input type="textarea" name="description" placeholder="Opis" size="50">    
 
-    </br>
+
         <label for="image">Cover Image</label>
         <input type="file" name="image" id="image" class="form-control"/>
-</br>
+
 <input type="submit" value="Dodaj">
 </div>
 </form>

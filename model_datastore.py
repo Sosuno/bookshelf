@@ -26,19 +26,15 @@ def from_datastore(entity):
 
 #---------------------------------> BOOKS
 
-def BookList(limit=10, cursor=None):
+def BookList():
     ds = get_client()
-
     query = ds.query(kind='Book', order=['title'])
-    query_iterator = query.fetch(limit=limit, start_cursor=cursor)
-    page = next(query_iterator.pages)
-
-    entities = builtin_list(map(from_datastore, page))
-    next_cursor = (
-        query_iterator.next_page_token.decode('utf-8')
-        if query_iterator.next_page_token else None)
-
-    return entities, next_cursor
+    results = list(query.fetch())
+    entities = []
+    for result in results:
+        entities.append(from_datastore(result))
+        
+    return entities
 
 def BookRead(id):
     ds = get_client()
@@ -83,6 +79,27 @@ def upload_image_file(file):
 
     return public_url
 
+def getBookByTitle(title):
+    ds = get_client()
+    query = ds.query(kind = 'Book')
+    books = query.fetch()
+    results = []
+    for book in books:
+        if title.lower() in book['title'].lower():
+            results.append(book)
+    
+    return results
+def getBookByAuthor(author):
+    ds = get_client()
+    query = ds.query(kind = 'Book')
+    books = query.fetch()
+    results = []
+    for book in books:
+        if author.lower() in book['author'].lower():
+            results.append(book)
+    
+    return results
+
 #---------------------------------> AUTHORS
 
 def AuthorRead(id):
@@ -100,8 +117,8 @@ def AuthorUpdate(data, id=None):
         key = ds.key('Author')
 
     entity = datastore.Entity(
-        key=key,
-        exclude_from_indexes=['birthYear'])
+        key=key
+       )
 
     entity.update(data)
     ds.put(entity)
@@ -113,10 +130,12 @@ createAuthor = AuthorUpdate
 
 def AuthorList():
     ds = get_client()
-
     query = ds.query(kind='Author', order=['lastName'])
     results = query.fetch()
-    return results
+    alist = []
+    for result in results:
+        alist.append(from_datastore(result))
+    return alist
 
 def AuthorDelete(id):
     ds = get_client()
@@ -124,7 +143,7 @@ def AuthorDelete(id):
     ds.delete(key)
 
 
-def isAuthorInDB(name, surname, birthYear):
+def isAuthorInDB(name, surname):
     ds = get_client()
     query = ds.query(kind='Author')
     query.add_filter('firstName', '=', name)
@@ -141,7 +160,7 @@ def getAuthor(name, surname):
     query.add_filter('firstName', '=', name)
     query.add_filter('lastName', '=', surname)
     result = list(query.fetch())
-    return result
+    return from_datastore(result)
 
 
 #---------------------------------> USERS
@@ -151,14 +170,13 @@ def getUser(username):
     query = ds.query(kind = 'User')
     query.add_filter('username', '=', username)
     result = list(query.fetch())
+    return from_datastore(result[0])
 
-    return result
 def UserRead(id):
     ds = get_client()
     key = ds.key('User', int(id))
     results = ds.get(key)
     return from_datastore(results)
-
 
 def UserUpdate(data, id=None):
     ds = get_client()
@@ -175,9 +193,7 @@ def UserUpdate(data, id=None):
     ds.put(entity)
     return from_datastore(entity)
 
-
 create = UserUpdate
-
 
 def UserDelete(id):
     ds = get_client()
@@ -215,14 +231,51 @@ def createSession(username):
     key = ds.key('Session')
     entity = datastore.Entity(key=key)
     entity.update({
-        'sessionID': uuid.UUID(),
+        'sessionID': str(uuid.uuid1()),
         'user': username,
         'status': 'active'
     })
     ds.put(entity)
-    return from_datastore(entity)
+    return entity
 
-def destroySession(sessionID):
+def destroySession(uuid):
     ds = get_client()
-    key = ds.key('Session', int(sessionID))
+    query = ds.query(kind = 'Session')
+    query.add_filter('sessionID', '=', uuid)
+    result = from_datastore(query.fetch(1))
+    key = ds.key('Session', int(result['id']))
     ds.delete(key)
+
+def destroyAllUserSessions(username):
+    ds = get_client()
+    query = ds.query(kind = 'Session')
+    query.add_filter('user', '=', username)
+    results = list(query.fetch())
+
+    for result in results:
+        r = from_datastore(result)
+        key = ds.key('Session', int(r['id']))      
+        ds.delete(key)
+
+def checkIfSessionActive(uuid):
+    ds = get_client()
+    query = ds.query(kind = 'Session')
+    query.add_filter('sessionID', '=', uuid)
+    query.add_filter('status', '=', 'active')
+    result = query.fetch(1)
+    if result is None:
+        return False
+    else:
+        return True
+
+def getUsernameFromSession(uuid):
+    ds = get_client() 
+    query = ds.query(kind = 'Session')
+    query.add_filter('sessionID', '=', uuid)
+    result = list(query.fetch())
+    if result is None:
+        return None
+    else:
+        r = from_datastore(result[0])
+        return r['user']
+

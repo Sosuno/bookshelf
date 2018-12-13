@@ -1,3 +1,4 @@
+
 <html>
 <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pretty.css')}}">
@@ -21,6 +22,5 @@
     </form>
     <a href="register"><button value="register">Register</button> </a>
 </div>
-
 </body>
 </html>
